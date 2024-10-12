@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email with Button</title>
+    <style>
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007BFF;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+<div>
+    ${FILE_BODY}
+</div>
+<p>Please click the button below to send your request:</p>
+<a class="button" href="http://${DCE_HOST}/api/unsafe.amamba.io/v1alpha1/workspaces/${WORKSPACE_ID}/pipelines/${JOB_BASE_NAME}/runs/${BUILD_ID}/approve?token=${MAIL_TOKEN}&decision=true">Approve</a>
+<a class="button" href="http://${DCE_HOST}/api/unsafe.amamba.io/v1alpha1/workspaces/${WORKSPACE_ID}/pipelines/${JOB_BASE_NAME}/runs/${BUILD_ID}/approve?token=${MAIL_TOKEN}&decision=false">Abort</a>
+<p>Best regards</p>
+</body>
+</html>
