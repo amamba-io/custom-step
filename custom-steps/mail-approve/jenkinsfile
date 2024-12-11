@@ -1,0 +1,42 @@
+pipeline {
+  agent {
+    node {
+      label 'base'
+    }
+  }
+  
+  environment {
+        REPO_URL = "<git repo url>"
+        CRENDIENTIAL_ID = "<crendential id>"
+        TEMPLATE_PATH = "./path/to/template"
+        DCE_TOKEN = "<token>"
+        DCE_HOST = "<your dce host>"
+  }
+
+  stages {
+    stage('test') {
+      steps {
+        container('base') {
+          git(branch: 'main', url: "${REPO_URL}", credentialsId: "${CRENDIENTIAL_ID}", changelog: true, poll: true)
+          script {
+            env.MAIL_BODY=amambaCustomStep(pluginID: 'mail-approval', version: 'v1.0.0', docker: [
+                image: 'amambadev/custom-step-mail-approve:v0.1.4',
+                script: 'bash /home/jenkins/script.sh'
+            ], args: [
+                FILE_PATH: "${TEMPLATE_PATH}",
+                DCE_HOST: "${DCE_HOST}",
+                DCE_TOKEN: "${DCE_TOKEN}",
+                ENVS: [
+                    NAME: 'test'
+              ]
+            ])
+          }
+          mail(to: 'test@example.com', subject: '测试邮件审核', body: "${env.MAIL_BODY}", mimeType: 'text/html')
+          input(message: 'approve', submitter: 'admin', id: 'approved')
+        }
+
+      }
+    }
+
+  }
+}
